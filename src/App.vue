@@ -1,5 +1,6 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
+  <el-button>Default</el-button>
   <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
 </template>
 
