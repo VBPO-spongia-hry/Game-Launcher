@@ -12,10 +12,10 @@ npm install
 
 #### Spustanie
 ```
-npm run serve
+npm run electron:serve
 ```
 
 #### Build appky
 ```
-npm run build
+npm run electron:build --windows|linux|macos
 ```

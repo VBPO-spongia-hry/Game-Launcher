@@ -1,6 +1,8 @@
 {
   "name": "game-launcher",
   "version": "0.1.0",
+  "author": "stanko",
+  "description": "Appka na launchovanie hier",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
