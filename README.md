@@ -1,24 +1,21 @@
 # game-launcher
+Source pre jednoduchy appstore na jednoduche instalovanie a spustanie nasich hier zo spongie. Ak si tu chcete dat nejaky svoj vytvor, tak treba spravit nasledovne veci:
+- Vytvorit repozitar v tejto organizacii
+- V Subore README.md vies napisat popis (da sa pouzivat markdown)
+- Spravit priecinok Screenshots do ktoreho das nejake putajuce fotky z hry 
 
-## Project setup
+## Setup ak chces nieco kodit do launchera
+### Nainstalovanie vsetkych kniznic
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+#### Spustanie
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+#### Build appky
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
