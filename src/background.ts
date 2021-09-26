@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, Menu, MenuItem } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import init from './installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -10,7 +11,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-async function createWindow() {
+async function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
@@ -22,15 +23,19 @@ async function createWindow() {
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
-    },
+    }
   })
-  const menu = new Menu();
+  const menu = new Menu()
   menu.append(new MenuItem({
     label: 'Settings',
     click: () => { }
   }))
 
-  win.setMenu(menu)
+  setTimeout(() => {
+    win.webContents.executeJavaScript(`localStorage.setItem("platform", "${process.platform}");`, true).then(res=>console.log(res))
+  }, 300);
+  init(win)
+  // win.setMenu()
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
