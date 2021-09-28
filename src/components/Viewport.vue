@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar>
     <div v-if="game">
-      <el-carousel v-if="game.Screenshots" height="40vh">
+      <el-carousel v-if="game.Screenshots" height="60vh" style="backgroun-color: black">
         <el-carousel-item v-for="item in game.Screenshots" :key="item">
           <el-image :src="item" fit="scale-down" style="width:100%; height:100%;"></el-image>
         </el-carousel-item>
@@ -23,7 +23,7 @@
                     :stroke-width="20"
                     :percentage="installProgress / installSize * 100"
                     >
-                    <span>{{installProgress / installSize * 100}}%</span>
+                    <span>{{ (installProgress / installSize * 100).toFixed(2) }}%</span>
                     </el-progress>
                 </div>
             </div>
@@ -31,8 +31,8 @@
       </div>
     </div>
     <div v-else class="content">
-        <h1>Vitaj v launcheri</h1>
-        <p>Vies tu jednoducho najst vsetky nase hry, ktore sme mali doteraz na spongii.</p>
+        <h1>Vitaj!</h1>
+        <p>Vies tu jednoducho najst a nainstalovat si vsetky nase hry, ktore sme naprogramovali na <a href="https://www.smnd.sk/mikey/PHP/spongia">spongiu</a>.</p>
     </div>
   </el-scrollbar>
 </template>
@@ -44,6 +44,7 @@ import axios from 'axios'
 import { Game } from '@/api'
 import Markdown from './Markdown.vue'
 import { ipcRenderer } from 'electron'
+import { ElMessageBox } from 'element-plus'
 
 interface data {
     game: Game | undefined;
@@ -64,7 +65,7 @@ export default defineComponent({
       description: 'Loading ...',
       installInprogress: false,
       installProgress: 0,
-      installSize: 0
+      installSize: 1
     } as data
   },
   mounted ():void {
@@ -86,6 +87,11 @@ export default defineComponent({
       this.installInprogress = false
       this.game.installed = true
       store.commit('installGame', this.game)
+    })
+    ipcRenderer.on('error', (e, err) => {
+      ElMessageBox.alert(err.toString(), 'Installation error', {
+      })
+      this.installInprogress = false
     })
   },
   methods: {

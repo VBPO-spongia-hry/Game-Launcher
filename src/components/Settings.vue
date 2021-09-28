@@ -1,6 +1,7 @@
 <template>
     <div>
         <el-button icon="el-icon-setting" circle @click="open"></el-button>
+        <el-button icon="el-icon-refresh" circle @click="reload()"></el-button>
         <el-dialog
             v-model="dialogVisible"
             title="Nastavenia"
@@ -29,12 +30,16 @@
 <script lang="ts">
 import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
+import { updateInstalledGames } from '@/api'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   mounted () {
+    const store = useStore()
     ipcRenderer.on('locationSelect', (e, newLoc: string) => {
       this.installLocation = newLoc
       localStorage.setItem('installLocation', newLoc)
+      updateInstalledGames(store)
     })
   },
   data () {
@@ -49,6 +54,9 @@ export default defineComponent({
     },
     browse () {
       ipcRenderer.send('locationSelect', this.installLocation)
+    },
+    reload () {
+      location.reload()
     }
   }
 })

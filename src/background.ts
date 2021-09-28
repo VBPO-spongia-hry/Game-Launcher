@@ -1,9 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, MenuItem } from 'electron'
+import { app, protocol, BrowserWindow, Menu, MenuItem, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import init from './installer'
+import Store, { Schema } from 'electron-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -30,11 +31,27 @@ async function createWindow () {
     label: 'Settings',
     click: () => { }
   }))
+  
+  win.setMenu(null)
+  win.webContents.on('new-window', function(e, url) {
+    e.preventDefault()
+    shell.openExternal(url)
+  });
+
+  const schema = <Schema<any>>{
+    installLocation: {
+      type: 'string',
+    }
+  };
+  const store = new Store({schema: schema});
 
   setTimeout(() => {
-    win.webContents.executeJavaScript(`localStorage.setItem("platform", "${process.platform}");`, true).then(res=>console.log(res))
+    win.webContents.executeJavaScript(`localStorage.setItem("platform", "${process.platform}");`, true)
+    win.webContents.executeJavaScript(`localStorage.setItem("installLocation", "${store.get('installLocation')}");`, true)
   }, 300);
-  init(win)
+
+
+  init(win, store)
   // win.setMenu()
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

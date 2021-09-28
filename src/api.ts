@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ipcRenderer } from 'electron'
+import { Store, useStore } from 'vuex'
 
 interface GameMetaData {
     name: string;
@@ -21,14 +22,14 @@ const requester = axios.create({
   timeout: 1000,
   // auth len kvoli zvyseniu rate limitu z 60 na 5000 requestov/h
   auth: {
-    password: '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',
+    password: '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',
     username: 'Stanko2'
   }
 })
 
 async function getGameNames () : Promise<GameMetaData[]> {
   const res = await requester.get(`/orgs/${ORGName}/repos`)
-  return res.data.filter((e:any) => e.language === 'C#').map((e: any) => {
+  return res.data.filter((e:any) => e.language === 'C#').map((e: { name: string, id: number }) => {
     return {
       name: e.name,
       id: e.id
@@ -70,4 +71,13 @@ async function installed (gameName: string): Promise<boolean> {
     ipcRenderer.send('isInstalled', gameName)
     ipcRenderer.once('isInstalled', (_e, data) => resolve(data))
   })
+}
+
+export async function updateInstalledGames (store: Store<any>):Promise<void> {
+//   console.log(store.state.games[0])
+  for (const game of store.state.games as Game[]) {
+    game.installed = await installed(game.name)
+    console.log(game.installed)
+    store.commit('installGame', game)
+  }
 }

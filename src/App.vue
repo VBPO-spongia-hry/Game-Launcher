@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <span>Game Launcher</span>
+      <span>{{ title }}</span>
       <div class="settings-btn">
         <settings />
       </div>
@@ -14,19 +14,35 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
 import Viewport from './components/Viewport.vue'
 import Sidebar from './components/Sidebar.vue'
 import Settings from './components/Settings.vue'
+import { useStore } from 'vuex'
+import { defineComponent } from 'vue'
 
-@Options({
+interface data {
+  title: string;
+}
+
+export default defineComponent({
   components: {
     Viewport,
     Sidebar,
     Settings
+  },
+  data () {
+    return {
+      title: 'Game launcher'
+    } as data
+  },
+  mounted ():void {
+    const store = useStore()
+    store.subscribe((mutation) => {
+      if (mutation.type !== 'select') return
+      this.title = store.state.games[mutation.payload - 1]?.name || 'Game launcher'
+    })
   }
 })
-export default class App extends Vue {}
 </script>
 
 <style lang="scss">
