@@ -29,34 +29,12 @@
       <el-empty v-else description="No images"></el-empty>
       <div class="content">
         <markdown :source="description"></markdown>
-        <div v-if="game.downloadUrl">
-          <div v-if="game.installed">
-            <el-button type="primary" @click="play()">Hrat</el-button>
-            <el-button type="danger" @click="uninstall()">Vymazat</el-button>
-          </div>
-          <div v-else>
-            <el-button
-              type="success"
-              :loading="installInprogress"
-              @click="install()"
-              >Instalovat</el-button
-            >
-            <div class="progressBar" v-if="installInprogress">
-              <span>Downloading ...</span>
-              <el-progress
-                :text-inside="true"
-                :stroke-width="20"
-                :percentage="(installProgress / installSize) * 100"
-              >
-                <span
-                  >{{
-                    ((installProgress / installSize) * 100).toFixed(2)
-                  }}%</span
-                >
-              </el-progress>
-            </div>
-          </div>
-        </div>
+        <el-button variant="primary" @click="downloadWindows()">
+          Download For Windows
+        </el-button>
+        <el-button variant="primary" @click="downloadLinux()">
+          Download For Linux
+        </el-button>
       </div>
     </div>
     <div v-else class="content">
@@ -64,7 +42,15 @@
       <p>
         Vies tu jednoducho najst a nainstalovat si vsetky nase hry, ktore sme
         naprogramovali na
-        <a href="https://www.smnd.sk/mikey/PHP/spongia">spongiu</a>.
+        <a href="https://www.smnd.sk/mikey/PHP/spongia">spongiu</a>. Pre
+        automaticke instalovanie a pohodlne spustanie hier si vies stiahnut nas
+        launcher
+        <el-button variant="primary" @click="downloadLauncherWindows()">
+          Download Launcher For Windows
+        </el-button>
+        <el-button variant="primary" @click="downloadLauncherLinux()">
+          Download Launcher For Linux
+        </el-button>
       </p>
     </div>
   </el-scrollbar>
@@ -76,7 +62,6 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import { Game } from '@/api'
 import Markdown from './Markdown.vue'
-import { ipcRenderer } from 'electron'
 import { ElMessageBox } from 'element-plus'
 
 interface data {
@@ -111,39 +96,19 @@ export default defineComponent({
         this.description = res.data
       })
     })
-    ipcRenderer.on('downloadProgress', (e, done, total) => {
-      this.installProgress = done
-      this.installSize = total
-    })
-    ipcRenderer.on('installFinished', (e) => {
-      if (!this.game) return
-      this.installInprogress = false
-      this.game.installed = true
-      store.commit('installGame', this.game)
-    })
-    ipcRenderer.on('error', (e, err) => {
-      ElMessageBox.alert(err.toString(), 'Installation error', {
-      })
-      this.installInprogress = false
-    })
   },
   methods: {
-    install(): void {
-      ipcRenderer.send('install', this.game?.name, this.game?.downloadUrl)
-      this.installInprogress = true
+    downloadLinux() {
+      location.href = this.game?.downloads.linux || location.href
     },
-    uninstall(): void {
-      if (!this.game) return
-      ipcRenderer.send('uninstall', this.game.name)
-      ipcRenderer.once('gameRemoved', (e) => {
-        if (!this.game) return
-        const store = useStore()
-        this.game.installed = false
-        store.commit('installGame', this.game)
-      })
+    downloadWindows() {
+      location.href = this.game?.downloads.windows || location.href
     },
-    play(): void {
-      ipcRenderer.send('play', this.game?.name)
+    downloadLauncherWindows() {
+      location.href = this.game?.downloads.linux || location.href
+    },
+    downloadLauncherLinux() {
+      location.href = this.game?.downloads.linux || location.href
     }
   }
 })

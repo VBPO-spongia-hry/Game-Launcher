@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { ipcRenderer } from 'electron'
 import { Store } from 'vuex'
 
 interface GameMetaData {
@@ -15,6 +14,10 @@ export interface Game extends GameMetaData {
   icon?: string;
   trailer?: string;
   installed: boolean;
+  downloads: {
+    windows: string;
+    linux: string;
+  }
 }
 const ORGName = 'VBPO-spongia-hry'
 const requester = axios.create({
@@ -60,7 +63,7 @@ export async function FetchAllGameData(): Promise<Game[]> {
         trailer: data.trailer,
         installed: await installed(name.name),
         version: data.version || '1.0.0',
-        downloadUrl: getDownloadUrl(data)
+        downloads: data.downloads
       })
     }
   }
@@ -74,10 +77,7 @@ function getDownloadUrl(data: GameResponse) {
 }
 
 async function installed(gameName: string): Promise<boolean> {
-  return new Promise<boolean>((resolve, reject) => {
-    ipcRenderer.send('isInstalled', gameName)
-    ipcRenderer.once('isInstalled', (_e, data) => resolve(data))
-  })
+  return false
 }
 
 export async function updateInstalledGames(store: Store<any>): Promise<void> {

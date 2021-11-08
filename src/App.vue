@@ -2,9 +2,9 @@
   <el-container>
     <el-header>
       <span>{{ title }}</span>
-      <div class="settings-btn">
+      <!-- <div class="settings-btn">
         <settings />
-      </div>
+      </div> -->
     </el-header>
     <el-container>
       <el-aside width="300px"><sidebar /></el-aside>
@@ -16,7 +16,7 @@
 <script lang="ts">
 import Viewport from './components/Viewport.vue'
 import Sidebar from './components/Sidebar.vue'
-import Settings from './components/Settings.vue'
+// import Settings from './components/Settings.vue'
 import { useStore } from 'vuex'
 import { defineComponent } from 'vue'
 
@@ -27,8 +27,8 @@ interface data {
 export default defineComponent({
   components: {
     Viewport,
-    Sidebar,
-    Settings
+    Sidebar
+    // Settings
   },
   data() {
     return {
@@ -36,6 +36,7 @@ export default defineComponent({
     } as data
   },
   mounted(): void {
+    document.title = '!.+? hry'
     const store = useStore()
     store.subscribe((mutation) => {
       if (mutation.type !== 'select') return

@@ -24,36 +24,33 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron'
 import { defineComponent } from 'vue'
-import { updateInstalledGames } from '@/api'
-import { useStore } from 'vuex'
 
 export default defineComponent({
-  mounted() {
-    const store = useStore()
-    ipcRenderer.on('locationSelect', (e, newLoc: string) => {
-      this.installLocation = newLoc
-      localStorage.setItem('installLocation', newLoc)
-      updateInstalledGames(store)
-    })
-  },
-  data() {
-    return {
-      installLocation: localStorage.getItem('installLocation'),
-      dialogVisible: false
-    }
-  },
-  methods: {
-    open() {
-      this.dialogVisible = true
-    },
-    browse() {
-      ipcRenderer.send('locationSelect', this.installLocation)
-    },
-    reload() {
-      location.reload()
-    }
-  }
+  // mounted() {
+  //   const store = useStore()
+  //   ipcRenderer.on('locationSelect', (e, newLoc: string) => {
+  //     this.installLocation = newLoc
+  //     localStorage.setItem('installLocation', newLoc)
+  //     updateInstalledGames(store)
+  //   })
+  // },
+  // data() {
+  //   return {
+  //     installLocation: localStorage.getItem('installLocation'),
+  //     dialogVisible: false
+  //   }
+  // },
+  // methods: {
+  //   open() {
+  //     this.dialogVisible = true
+  //   },
+  //   browse() {
+  //     ipcRenderer.send('locationSelect', this.installLocation)
+  //   },
+  //   reload() {
+  //     location.reload()
+  //   }
+  // }
 })
 </script>
