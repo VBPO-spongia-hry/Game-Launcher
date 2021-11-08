@@ -7,8 +7,8 @@
       </div>
     </el-header>
     <el-container>
-        <el-aside width="300px"><sidebar /></el-aside>
-        <el-main class="main" style="padding: 0"><viewport /></el-main>
+      <el-aside width="300px"><sidebar /></el-aside>
+      <el-main class="main" style="padding: 0"><viewport /></el-main>
     </el-container>
   </el-container>
 </template>
@@ -30,12 +30,12 @@ export default defineComponent({
     Sidebar,
     Settings
   },
-  data () {
+  data() {
     return {
       title: 'Game launcher'
     } as data
   },
-  mounted ():void {
+  mounted(): void {
     const store = useStore()
     store.subscribe((mutation) => {
       if (mutation.type !== 'select') return

@@ -12,7 +12,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-async function createWindow () {
+async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
@@ -31,9 +31,9 @@ async function createWindow () {
     label: 'Settings',
     click: () => { }
   }))
-  
-  win.setMenu(null)
-  win.webContents.on('new-window', function(e, url) {
+
+  win.setMenu(menu)
+  win.webContents.on('new-window', function (e, url) {
     e.preventDefault()
     shell.openExternal(url)
   });
@@ -43,7 +43,7 @@ async function createWindow () {
       type: 'string',
     }
   };
-  const store = new Store({schema: schema});
+  const store = new Store({ schema: schema });
 
   setTimeout(() => {
     win.webContents.executeJavaScript(`localStorage.setItem("platform", "${process.platform}");`, true)

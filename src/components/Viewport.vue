@@ -1,38 +1,71 @@
 <template>
   <el-scrollbar>
     <div v-if="game">
-      <el-carousel v-if="game.Screenshots" height="60vh" style="backgroun-color: black">
+      <el-carousel
+        v-if="game.Screenshots || game.trailer"
+        height="60vh"
+        style="backgroun-color: black"
+      >
+        <el-carousel-item v-if="game.trailer">
+          <iframe
+            :src="game.trailer"
+            v-if="game.trailer.match('youtube.com')"
+            style="width: 100%; height: 100%"
+          ></iframe>
+          <video
+            :src="game.trailer"
+            autoplay
+            style="width: 100%; height: 100%"
+          ></video>
+        </el-carousel-item>
         <el-carousel-item v-for="item in game.Screenshots" :key="item">
-          <el-image :src="item" fit="scale-down" style="width:100%; height:100%;"></el-image>
+          <el-image
+            :src="item"
+            fit="scale-down"
+            style="width: 100%; height: 100%"
+          ></el-image>
         </el-carousel-item>
       </el-carousel>
       <el-empty v-else description="No images"></el-empty>
       <div class="content">
         <markdown :source="description"></markdown>
         <div v-if="game.downloadUrl">
-            <div v-if="game.installed">
-                <el-button type="primary" @click="play()">Hrat</el-button>
-                <el-button type="danger" @click="uninstall()">Vymazat</el-button>
+          <div v-if="game.installed">
+            <el-button type="primary" @click="play()">Hrat</el-button>
+            <el-button type="danger" @click="uninstall()">Vymazat</el-button>
+          </div>
+          <div v-else>
+            <el-button
+              type="success"
+              :loading="installInprogress"
+              @click="install()"
+              >Instalovat</el-button
+            >
+            <div class="progressBar" v-if="installInprogress">
+              <span>Downloading ...</span>
+              <el-progress
+                :text-inside="true"
+                :stroke-width="20"
+                :percentage="(installProgress / installSize) * 100"
+              >
+                <span
+                  >{{
+                    ((installProgress / installSize) * 100).toFixed(2)
+                  }}%</span
+                >
+              </el-progress>
             </div>
-            <div v-else>
-                <el-button type="success" :loading="installInprogress" @click="install()">Instalovat</el-button>
-                <div class="progressBar" v-if="installInprogress">
-                    <span>Downloading ...</span>
-                    <el-progress
-                    :text-inside="true"
-                    :stroke-width="20"
-                    :percentage="installProgress / installSize * 100"
-                    >
-                    <span>{{ (installProgress / installSize * 100).toFixed(2) }}%</span>
-                    </el-progress>
-                </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
     <div v-else class="content">
-        <h1>Vitaj!</h1>
-        <p>Vies tu jednoducho najst a nainstalovat si vsetky nase hry, ktore sme naprogramovali na <a href="https://www.smnd.sk/mikey/PHP/spongia">spongiu</a>.</p>
+      <h1>Vitaj!</h1>
+      <p>
+        Vies tu jednoducho najst a nainstalovat si vsetky nase hry, ktore sme
+        naprogramovali na
+        <a href="https://www.smnd.sk/mikey/PHP/spongia">spongiu</a>.
+      </p>
     </div>
   </el-scrollbar>
 </template>
@@ -47,11 +80,11 @@ import { ipcRenderer } from 'electron'
 import { ElMessageBox } from 'element-plus'
 
 interface data {
-    game: Game | undefined;
-    description: string;
-    installInprogress: boolean;
-    installProgress: number;
-    installSize: number;
+  game: Game | undefined;
+  description: string;
+  installInprogress: boolean;
+  installProgress: number;
+  installSize: number;
 }
 
 export default defineComponent({
@@ -59,7 +92,7 @@ export default defineComponent({
   components: {
     Markdown
   },
-  data () {
+  data() {
     return {
       game: undefined,
       description: 'Loading ...',
@@ -68,7 +101,7 @@ export default defineComponent({
       installSize: 1
     } as data
   },
-  mounted ():void {
+  mounted(): void {
     const store = useStore()
     store.subscribe((mutation) => {
       if (mutation.type !== 'select') return
@@ -95,11 +128,11 @@ export default defineComponent({
     })
   },
   methods: {
-    install ():void {
+    install(): void {
       ipcRenderer.send('install', this.game?.name, this.game?.downloadUrl)
       this.installInprogress = true
     },
-    uninstall ():void {
+    uninstall(): void {
       if (!this.game) return
       ipcRenderer.send('uninstall', this.game.name)
       ipcRenderer.once('gameRemoved', (e) => {
@@ -109,7 +142,7 @@ export default defineComponent({
         store.commit('installGame', this.game)
       })
     },
-    play ():void {
+    play(): void {
       ipcRenderer.send('play', this.game?.name)
     }
   }
