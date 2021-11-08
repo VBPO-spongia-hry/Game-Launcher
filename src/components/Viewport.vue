@@ -105,10 +105,10 @@ export default defineComponent({
       location.href = this.game?.downloads.windows || location.href
     },
     downloadLauncherWindows() {
-      location.href = this.game?.downloads.linux || location.href
+      location.href = 'https://github.com/VBPO-spongia-hry/VBPO-Spongia-hry.github.io/releases/download/GameLauncher/game-launcher.Setup.0.1.0.exe'
     },
     downloadLauncherLinux() {
-      location.href = this.game?.downloads.linux || location.href
+      location.href = 'https://github.com/VBPO-spongia-hry/VBPO-Spongia-hry.github.io/releases/download/GameLauncher/game-launcher-0.1.0.AppImage'
     }
   }
 })
